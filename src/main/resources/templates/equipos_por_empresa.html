@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Equipos de la Empresa</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+    <h1>Equipos de la Empresa</h1>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Referencia</th>
+                <th>Serial</th>
+                <th>Placa</th>
+                <!-- Agrega aquí más columnas si es necesario -->
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="equipo : ${equipos}">
+                <td th:text="${equipo.id}">ID</td>
+                <td th:text="${equipo.tipo}">Tipo</td>
+                <td th:text="${equipo.estado ? 'Activo' : 'Inactivo'}">Estado</td>
+                <td th:text="${equipo.referencia}">Referencia</td>
+                <td th:text="${equipo.serial}">Serial</td>
+                <td th:text="${equipo.placa}">Placa</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{/equipos}">Volver a todos los equipos</a>
+</body>
+</html>

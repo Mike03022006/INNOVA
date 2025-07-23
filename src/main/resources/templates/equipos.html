@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Equipos</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #aaa;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+    <h1>Equipos Registrados</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Referencia</th>
+                <th>Serial</th>
+                <th>Placa Interna</th>
+                <th>Placa Proveedor</th>
+                <th>Fecha Adquisición</th>
+                <th>Modalidad</th>
+                <th>Remisión</th>
+                <th>Costo</th>
+                <th>Proveedor</th>
+            </tr>
+        </thead>
+        <form method="get" action="/equipos/buscar">
+        <select name="campo">
+            <option value="tipo">Tipo</option>
+            <option value="serial">Serial</option>
+            <option value="placa">Placa Interna</option>
+            <option value="costoDeAlquilerDeProveedor">Costo</option>
+        </select>
+
+        <select name="operador">
+            <option value="=">=</option>
+            <option value="contiene">Contiene</option>
+        </select>
+
+        <input type="text" name="valor" placeholder="Buscar...">
+        <button type="submit">Buscar</button>
+        </form>
+
+        <tbody>
+            <tr th:each="equipo : ${equipos}">
+                <td th:text="${equipo.id}"></td>
+                <td th:text="${equipo.tipo}"></td>
+                <td th:text="${equipo.estado ? 'Activo' : 'Inactivo'}"></td>
+                <td th:text="${equipo.referencia}"></td>
+                <td th:text="${equipo.serial}"></td>
+                <td th:text="${equipo.placa}"></td>
+                <td th:text="${equipo.placaDeProveedor}"></td>
+                <td th:text="${equipo.fechaDeAdquisicion}"></td>
+                <td th:text="${equipo.modalidadDeAdquisicion}"></td>
+                <td th:text="${equipo.serialRemisionDePoveedor}"></td>
+                <td th:text="${equipo.costoDeAlquilerDeProveedor}"></td>
+                <td th:text="${equipo.proveedor.nombreDeProveedor}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,75 +1,115 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Lista de Equipos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
         }
-        th, td {
-            border: 1px solid #aaa;
-            padding: 8px;
-            text-align: left;
+        .table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
-        th {
-            background-color: #eee;
+        .navbar-custom {
+            background-color: #343a40;
+        }
+        .navbar-custom a {
+            color: white !important;
+        }
+        .form-inline select,
+        .form-inline input {
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>Equipos Registrados</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Tipo</th>
-                <th>Estado</th>
-                <th>Referencia</th>
-                <th>Serial</th>
-                <th>Placa Interna</th>
-                <th>Placa Proveedor</th>
-                <th>Fecha Adquisición</th>
-                <th>Modalidad</th>
-                <th>Remisión</th>
-                <th>Costo</th>
-                <th>Proveedor</th>
-            </tr>
-        </thead>
-        <form method="get" action="/equipos/buscar">
-        <select name="campo">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/}">← Menú Principal</a>
+    </div>
+</nav>
+<div class="container table-container">
+    <span class="text-muted" th:text="'Total: ' + ${#lists.size(equipos)} + ' equipos'">Total</span>
+    <h1 class="mb-4 text-center">📋 Equipos Registrados</h1>
+
+            <form method="get" th:action="@{/equipos/buscar}" class="row g-2">
+        <div class="col-auto">
+            <select name="campo" class="form-select">
             <option value="tipo">Tipo</option>
+            <option value="estado">Estado</option>
             <option value="serial">Serial</option>
-            <option value="placa">Placa Interna</option>
-            <option value="costoDeAlquilerDeProveedor">Costo</option>
-        </select>
+            <option value="placa">Placa</option>
+            <option value="caracteristicas">Características</option>
+            <option value="modalidadDeAdquisicion">Modalidad</option>
+            <option value="remisionDeProveedor">Remisión proveedor</option>
+            <option value="fechaDeAdquisicion">Fecha de adquisición</option>
+            <!-- <option value="proveedorNombre">Proveedor (nombre)</option> -->
+            </select>
+        </div>
 
-        <select name="operador">
-            <option value="=">=</option>
+        <div class="col-auto">
+            <select name="operador" class="form-select">
+            <option value="=">Igual</option>
             <option value="contiene">Contiene</option>
-        </select>
+            </select>
+        </div>
 
-        <input type="text" name="valor" placeholder="Buscar...">
-        <button type="submit">Buscar</button>
+        <div class="col-auto">
+            <input name="valor" class="form-control" placeholder="Valor a buscar">
+        </div>
+
+        <div class="col-auto">
+            <button class="btn btn-primary">Buscar</button>
+        </div>
         </form>
 
-        <tbody>
-            <tr th:each="equipo : ${equipos}">
-                <td th:text="${equipo.id}"></td>
-                <td th:text="${equipo.tipo}"></td>
-                <td th:text="${equipo.estado ? 'Activo' : 'Inactivo'}"></td>
-                <td th:text="${equipo.referencia}"></td>
-                <td th:text="${equipo.serial}"></td>
-                <td th:text="${equipo.placa}"></td>
-                <td th:text="${equipo.placaDeProveedor}"></td>
-                <td th:text="${equipo.fechaDeAdquisicion}"></td>
-                <td th:text="${equipo.modalidadDeAdquisicion}"></td>
-                <td th:text="${equipo.serialRemisionDePoveedor}"></td>
-                <td th:text="${equipo.costoDeAlquilerDeProveedor}"></td>
-                <td th:text="${equipo.proveedor.nombreDeProveedor}"></td>
-            </tr>
-        </tbody>
-    </table>
+
+    
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Serial</th>
+                    <th>Placa</th>
+                    <th>Tipo</th>
+                    <th>Características</th>
+                    <th>Estado</th>
+                    <th>Modalidad</th>
+                    <th>Costo de Adquisición</th>
+                    <th>Fecha de adquisición</th>
+                    <th>Remisión</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="equipo : ${equipos}">
+                    <td th:text="${equipo.id}"></td>
+                    <td th:text="${equipo.serial}"></td>
+                    <td th:text="${equipo.placa}"></td>
+                    <td th:text="${equipo.tipo}"></td>
+                    <td th:text="${equipo.caracteristicas}"></td>
+                    <td th:switch="${equipo.estado}">
+                    <span class="badge bg-success" th:case="'1'">Activo</span>
+                    <span class="badge bg-secondary" th:case="'0'">Inactivo</span>
+                    <span class="badge bg-secondary" th:case="*">Inactivo</span>
+                    </td>
+                    <td th:text="${equipo.modalidadDeAdquisicion}"></td>
+                    <td th:text="${equipo.costoDeAdquisicion}"></td>
+                    <td th:text="${equipo.fechaDeAdquisicion}"></td>
+                    <td th:text="${equipo.remisionDeProveedor}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,7 +1,5 @@
 package com.miempresa.alquileres.service.impl;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,64 +21,80 @@ public class EquipoServiceImpl implements EquipoService {
     }
 
     @Override
+    public void guardar(Equipo equipo){
+        equipoRepository.save(equipo);
+    }
+
+    @Override
     public List<Equipo> obtenerPorEmpresa(Long empresaId){
         return equipoRepository.findByEmpresaId(empresaId);
     }
 
- @Override
+    @Override
+    public List<Equipo> obtenerPorProveedor(Long proveedorId){
+        return equipoRepository.findByProveedorId(proveedorId);
+    }    
+    
+@Override
 public List<Equipo> buscarUniversal(String campo, String operador, String valor) {
+    // normaliza operador para evitar problemas de mayúsculas/espacios
+    String op = operador == null ? "=" : operador.trim().toLowerCase();
+    String v  = valor == null ? "" : valor.trim();
+
     return switch (campo) {
-        case "tipo" -> operador.equals("=") ? 
-            equipoRepository.findByTipo(valor) :
-            operador.equals("contiene") ? equipoRepository.findByTipoContaining(valor) : List.of();
+        case "tipo" -> op.equals("=")
+                ? equipoRepository.findByTipo(v)
+                : equipoRepository.findByTipoContaining(v);
 
-        case "estado" -> equipoRepository.findByEstado(Boolean.valueOf(valor));
+        case "estado" -> op.equals("=")
+                ? equipoRepository.findByEstado(v)
+                : equipoRepository.findByEstadoContaining(v);
 
-        case "referencia" -> operador.equals("=") ? 
-            equipoRepository.findByReferencia(valor) :
-            operador.equals("contiene") ? equipoRepository.findByReferenciaContaining(valor) : List.of();
+        case "serial" -> op.equals("=")
+                ? equipoRepository.findBySerial(v)
+                : equipoRepository.findBySerialContaining(v);
 
-        case "serial" -> operador.equals("=") ? 
-            equipoRepository.findBySerial(valor) :
-            operador.equals("contiene") ? equipoRepository.findBySerialContaining(valor) : List.of();
+        case "placa" -> op.equals("=")
+                ? equipoRepository.findByPlaca(v)
+                : equipoRepository.findByPlacaContaining(v);
 
-        case "placa" -> operador.equals("=") ? 
-            equipoRepository.findByPlaca(valor) :
-            operador.equals("contiene") ? equipoRepository.findByPlacaContaining(valor) : List.of();
+        case "caracteristicas" -> op.equals("=")
+                ? equipoRepository.findByCaracteristicas(v)
+                : equipoRepository.findByCaracteristicasContaining(v);
 
-        case "placaDeProveedor" -> operador.equals("=") ? 
-            equipoRepository.findByPlacaDeProveedor(valor) :
-            operador.equals("contiene") ? equipoRepository.findByPlacaDeProveedorContaining(valor) : List.of();
+        case "modalidadDeAdquisicion" -> op.equals("=")
+                ? equipoRepository.findByModalidadDeAdquisicion(v)
+                : equipoRepository.findByModalidadDeAdquisicionContaining(v);
+
+        // ✅ nombre correcto (antes estaba mal escrito)
+        case "remisionDeProveedor" -> op.equals("=")
+                ? equipoRepository.findByRemisionDeProveedor(v)
+                : equipoRepository.findByRemisionDeProveedorContaining(v);
 
         case "fechaDeAdquisicion" -> {
             try {
-                LocalDate fecha = LocalDate.parse(valor);
+                var fecha = java.time.LocalDate.parse(v);
                 yield equipoRepository.findByFechaDeAdquisicion(fecha);
             } catch (Exception e) {
-                yield List.of();
+                yield java.util.List.of();
             }
         }
 
-        case "modalidadDeAdquisicion" -> operador.equals("=") ? 
-            equipoRepository.findByModalidadDeAdquisicion(valor) :
-            operador.equals("contiene") ? equipoRepository.findByModalidadDeAdquisicionContaining(valor) : List.of();
-
-        case "serialRemisionDePoveedor" -> operador.equals("=") ? 
-            equipoRepository.findBySerialRemisionDePoveedor(valor) :
-            operador.equals("contiene") ? equipoRepository.findBySerialRemisionDePoveedorContaining(valor) : List.of();
-
-        case "costoDeAlquilerDeProveedor" -> {
-            try {
-                BigDecimal costo = new BigDecimal(valor);
-                yield equipoRepository.findByCostoDeAlquilerDeProveedor(costo);
-            } catch (Exception e) {
-                yield List.of();
+        // si quieres soportar exacto/contiene por proveedor:
+        case "proveedorNombre" -> {
+            if ("=".equals(op)) {
+                yield equipoRepository.findByProveedorNombre(v);
+            } else {
+                // requiere el método containing en el repo (ver punto 2)
+                try {
+                    yield equipoRepository.findByProveedorNombreContaining(v);
+                } catch (Exception e) {
+                    yield equipoRepository.findByProveedorNombre(v); // fallback exacto
+                }
             }
         }
 
-        default -> List.of();
+        default -> java.util.List.of();
     };
 }
-
-
 }

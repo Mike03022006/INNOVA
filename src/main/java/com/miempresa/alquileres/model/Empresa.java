@@ -16,7 +16,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "empresas")
+@Table(name = "clientes")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,9 +30,8 @@ public class Empresa {
     @OneToMany(mappedBy = "empresa")
     private List<Equipo> equipos;
 
-
-    @Column(name = "nombre_empresa")
-    private String nombreDeEmpresa;
+    @Column(name = "nombre")
+    private String nombre;
 
     @Column(name = "nit")
     private String nit;

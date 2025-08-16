@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Alquileres de la Empresa</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+<div class="container mt-4">
+    <h2>Alquileres de Empresa ID: <span th:text="${empresaId}"></span></h2>
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Equipo</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Fin</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="alquiler : ${alquileres}">
+            <td th:text="${alquiler.id}"></td>
+            <td th:text="${alquiler.equipo != null ? alquiler.equipo.tipo : '-'}"></td>
+            <td th:text="${alquiler.fechaDeEntrega != null ? #temporals.format(alquiler.fechaDeEntrega,'yyyy-MM-dd') : '-'}"></td>
+            <td th:text="${alquiler.fechaDeDevolucion != null ? #temporals.format(alquiler.fechaDeDevolucion,'yyyy-MM-dd') : '-'}"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

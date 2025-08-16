@@ -12,37 +12,37 @@ import com.miempresa.alquileres.model.Equipo;
 @Repository
 public interface EquipoRepository extends JpaRepository<Equipo, Long>{
 
-
-    List<Equipo> findByTipo(String tipo);
-    List<Equipo> findByTipoContaining(String tipo);
-
-    List<Equipo> findByEstado(Boolean estado);
-
-    List<Equipo> findByReferencia(String referencia);
-    List<Equipo> findByReferenciaContaining(String referencia);
-
+    List<Equipo> findByProveedorNombreContaining(String nombreProveedor);
     List<Equipo> findBySerial(String serial);
     List<Equipo> findBySerialContaining(String serial);
 
     List<Equipo> findByPlaca(String placa);
     List<Equipo> findByPlacaContaining(String placa);
 
-    List<Equipo> findByPlacaDeProveedor(String placaDeProveedor);
-    List<Equipo> findByPlacaDeProveedorContaining(String placaDeProveedor);
+    List<Equipo> findByTipo(String tipo);
+    List<Equipo> findByTipoContaining(String tipo);
 
-    List<Equipo> findByFechaDeAdquisicion(LocalDate fecha);
+    List<Equipo> findByCaracteristicas(String caracteristicas);
+    List<Equipo> findByCaracteristicasContaining(String caracteristicas);
+
+    List<Equipo> findByEstado(String estado);
+    List<Equipo> findByEstadoContaining(String estado);
 
     List<Equipo> findByModalidadDeAdquisicion(String modalidad);
     List<Equipo> findByModalidadDeAdquisicionContaining(String modalidad);
 
-    List<Equipo> findBySerialRemisionDePoveedor(String remision);
-    List<Equipo> findBySerialRemisionDePoveedorContaining(String remision);
-    
-    List<Equipo> findByCostoDeAlquilerDeProveedor(BigDecimal costo);
+    List<Equipo> findByCostoDeAdquisicion(BigDecimal costo);
 
-    List<Equipo> findByProveedorNombreDeProveedor(String nombreProveedor);
+    List<Equipo> findByFechaDeAdquisicion(LocalDate fecha);
+
+    List<Equipo> findByRemisionDeProveedor(String remision);
+    List<Equipo> findByRemisionDeProveedorContaining(String remision);
+
+    List<Equipo> findByProveedorNombre(String nombreProveedor);
     List<Equipo> findByEmpresaId(long empresaID);
 
+    List<Equipo> findByProveedorId(long proveedorId);
+    
 }
 
 

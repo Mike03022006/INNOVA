@@ -25,18 +25,17 @@ public class Proveedor{
     private long id;
 
     @Column(name = "nombre")
-    private String nombreDeProveedor;
+    private String nombre;
+
+    @Column(name = "contacto")
+    private String contacto;
 
     @Column(name = "telefono")
-    private String telefonDeProveedor;
-    
-    @Column(name = "contacto")
-    private String contactoDeProveedor;
+    private String telefon;
 
     @Column(name = "correo")
-    private String correoDeProveedor;
+    private String correo;
 
     @Column(name = "direccion")
-    private String direccionDeProveedor;
-
+    private String direccion;
 }

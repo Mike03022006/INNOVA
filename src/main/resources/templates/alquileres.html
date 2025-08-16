@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Alquileres</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/}">Sistema de Alquileres</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" th:href="@{/alquileres}">Lista de Alquileres</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/equipos}">Equipos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/menu_empresas}">Empresas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/}">Menu principal</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h1 class="mb-4">Lista de Alquileres</h1>
+    <span class="text-muted" th:text="'Total: ' + ${#lists.size(alquileres)} + ' alquileres'">Total</span>
+
+    <table class="table table-bordered table-hover table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Serial</th>
+                <th>Placa</th>
+                <th>Empresa</th>
+                <th>Fecha Entrega</th>
+                <th>Fecha Devolución</th>
+                <th>Días</th>
+                <th>Valor</th>
+                <th>Proyecto</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="alquiler : ${alquileres}">
+                <td th:text="${alquiler.id}"></td>
+                <td th:text="${alquiler.equipo?.serial}"></td>
+                <td th:text="${alquiler.equipo?.placa}"></td>
+                <td th:text="${alquiler.empresa?.nombre}"></td>
+                <td th:text="${alquiler.fechaDeEntrega != null ? #temporals.format(alquiler.fechaDeEntrega, 'dd/MM/yyyy') : ''}"></td>
+                <td th:text="${alquiler.fechaDeDevolucion != null ? #temporals.format(alquiler.fechaDeDevolucion, 'dd/MM/yyyy') : ''}"></td>
+                <td th:text="${alquiler.diasDeAlquiler}"></td>
+                <td th:text="${#numbers.formatDecimal(alquiler.valor, 0, 'POINT', 2, 'COMMA')}"></td>
+                <td th:text="${alquiler.proyecto}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{/}" class="btn btn-secondary mt-3">Volver al inicio</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

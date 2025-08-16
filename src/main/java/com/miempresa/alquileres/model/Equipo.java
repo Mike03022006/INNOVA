@@ -34,37 +34,34 @@ public class Equipo {
     private Proveedor proveedor;
 
     @ManyToOne
-    @JoinColumn(name = "empresa_id")
+    @JoinColumn(name = "cliente_id")
     private Empresa empresa;
-    
-    @Column(name = "tipo")
-    private String tipo;
 
-    @Column(name = "estado")
-    private Boolean estado;
-
-    @Column(name = "referencia")
-    private String referencia;
-    
     @Column(name = "serial")
     private String serial;
 
     @Column(name = "placa_interna")
     private String placa;
 
-    @Column(name = "placa_proveedor")
-    private String placaDeProveedor;
+    @Column(name = "tipo")
+    private String tipo;
+
+    @Column(name= "caracteristicas")
+    private String caracteristicas; 
+
+    @Column(name = "estado")
+    private String estado;
+
+    @Column(name = "modalidad_adquisicion")
+    private String modalidadDeAdquisicion;
+
+    @Column(name = "costo_adquisicion")
+    private BigDecimal costoDeAdquisicion; 
 
     @Column(name = "fecha_entrega_proveedor")
     private LocalDate fechaDeAdquisicion;
 
-    @Column(name = "manera_adquisicion")
-    private String modalidadDeAdquisicion;
-
     @Column(name = "remision_proveedor")
-    private String serialRemisionDePoveedor;
+    private String remisionDeProveedor;
 
-    @Column(name = "costo_adquisicion")
-    private BigDecimal costoDeAlquilerDeProveedor;
-    
 }

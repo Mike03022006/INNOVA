@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #5c5ff5, #bde0fe);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            display: flex;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            width: 900px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* Columna izquierda */
+        .form-section {
+            flex: 1;
+            padding: 40px;
+        }
+
+        .form-section h2 {
+            margin-top: 0;
+            font-size: 14px;
+            color: gray;
+        }
+
+        .form-section h1 {
+            margin: 10px 0;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-top: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        .forgot {
+            text-align: right;
+            font-size: 12px;
+            margin-top: 5px;
+            color: #777;
+            cursor: pointer;
+        }
+
+        .btn-login {
+            background: #6be1ff;
+            border: none;
+            color: white;
+            padding: 12px;
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .social-login {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .social-login button {
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            padding: 10px;
+            background: white;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .register-link {
+            text-align: center;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .register-link a {
+            color: #6b81ff;
+            text-decoration: none;
+        }
+
+        /* Columna derecha */
+        .image-section {
+            flex: 1;
+            background: #dff6ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-section img {
+            width: 80%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <!-- Formulario -->
+    <div class="form-section">
+        <h2>Logo Here</h2>
+        <h1>Log In</h1>
+
+        <label>Email</label>
+        <input type="email" placeholder="login@gmail.com">
+
+        <label>Password</label>
+        <input type="password" placeholder="••••••••">
+        <div class="forgot">Forgot Password?</div>
+
+        <button class="btn-login">LOGIN →</button>
+
+        <div class="social-login">
+            <button><i class="fab fa-google"></i></button>
+            <button><i class="fab fa-github"></i></button>
+            <button><i class="fab fa-facebook"></i></button>
+        </div>
+
+        <div class="register-link">
+            Don't have an account yet? <a href="#">Sign up for free</a>
+        </div>
+    </div>
+
+    <!-- Imagen -->
+    <div class="image-section">
+        <img src="C:\Users\migue\Documents\alquileres\src\main\resources\templates\gratis-png-tecnologia-software-software-software-desarrollo-web-negocios-tecnologia-thumbnail.png" alt="Ilustración login">
+    </div>
+</div>
+
+</body>
+</html>

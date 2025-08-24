@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title th:text="${titulo}">Reporte de Equipos</title>
+
+  <style type="text/css">
+    @page { size: A4 landscape; margin: 14mm; }
+
+    body { font-family: sans-serif; font-size: 11px; }
+    h1 { font-size: 16px; margin: 0 0 8px 0; }
+    .meta { font-size: 10px; color: #555; margin-bottom: 10px; }
+
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    thead { display: table-header-group; }  /* Repite cabecera */
+    tfoot { display: table-row-group; }
+
+    th, td { border: 1px solid #999; padding: 4px; vertical-align: top; }
+    th { background: #eee; text-align: left; }
+
+    /* Intentos de wrap compatibles con FS/OpenHTMLToPDF */
+    td, th {
+      word-wrap: break-word;        /* legacy */
+      -fs-word-wrap: break-word;    /* prefijo Flying Saucer */
+      overflow-wrap: break-word;    /* estándar (si lo soporta) */
+      white-space: normal;
+      hyphens: auto;
+    }
+
+    /* Forzar quiebre incluso en cadenas SIN espacios (seriales, características, remisión) */
+    .wrap {
+      word-break: break-all;        /* fuerza cortes en cualquier punto */
+    }
+
+    .num   { text-align: right; white-space: nowrap; }
+    .fecha { white-space: nowrap; }
+
+    tr { page-break-inside: avoid; }
+  </style>
+</head>
+<body>
+  <h1 th:text="${titulo}">Reporte de Equipos</h1>
+ <div class="meta" th:if="${subtitulo != null}" th:text="${subtitulo}">Todos</div>
+  <div class="meta" th:text="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm')}">2025-08-21 10:00</div>
+
+  <table>
+    <colgroup>
+      <col style="width:5%" />
+      <col style="width:11%" />
+      <col style="width:9%" />
+      <col style="width:10%" />
+      <col style="width:18%" />
+      <col style="width:8%" />
+      <col style="width:12%" />
+      <col style="width:10%" />
+      <col style="width:9%" />
+      <col style="width:8%" />
+    </colgroup>
+
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Serial</th>
+        <th>Placa</th>
+        <th>Tipo</th>
+        <th>Características</th>
+        <th>Estado</th>
+        <th>Modalidad</th>
+        <th class="num">Costo</th>
+        <th class="fecha">Fecha Adq.</th>
+        <th>Remisión</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr th:each="e : ${equipos}">
+        <td th:text="${e.id}">1</td>
+        <td class="wrap" th:text="${e.serial}">S</td>
+        <td th:text="${e.placa}">P</td>
+        <td th:text="${e.tipo}">T</td>
+        <td class="wrap" th:text="${e.caracteristicas}">C</td>
+        <td>
+          <span th:switch="${e.estado}">
+            <span th:case="'1'">Activo</span>
+            <span th:case="'0'">Inactivo</span>
+            <span th:case="'2'">En reparación</span>
+            <span th:case="*">N/D</span>
+          </span>
+        </td>
+        <td th:text="${e.modalidadDeAdquisicion}">M</td>
+        <td class="num"   th:text="${e.costoDeAdquisicion}">0</td>
+        <td class="fecha" th:text="${e.fechaDeAdquisicion}">2024-01-01</td>
+        <td class="wrap" th:text="${e.remisionDeProveedor}">R</td>
+      </tr>
+    </tbody>
+
+    <tfoot>
+      <tr>
+        <td colspan="10" th:text="'Total equipos: ' + ${#lists.size(equipos)}">Total equipos: 0</td>
+      </tr>
+    </tfoot>
+  </table>
+</body>
+</html>

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.miempresa.alquileres.model.Equipo;
@@ -42,6 +43,14 @@ public interface EquipoRepository extends JpaRepository<Equipo, Long>{
     List<Equipo> findByEmpresaId(long empresaID);
 
     List<Equipo> findByProveedorId(long proveedorId);
+    @Query("""
+        SELECT e FROM Equipo e
+        WHERE e.id NOT IN (
+            SELECT a.equipo.id FROM Alquiler a
+            WHERE a.fechaDeDevolucion IS NULL OR a.fechaDeDevolucion >= CURRENT_DATE
+        )
+    """)
+    List<Equipo> findEquiposDisponibles();
     
 }
 

@@ -35,61 +35,101 @@
 </nav>
 
 <div class="form-container">
-    <h1 class="mb-4 text-center">🛠️ Registrar Nuevo Equipo</h1>
+    <h1 class="mb-4 text-center">🛠 Registrar Nuevo Equipo</h1>
 
-    <form th:action="@{/equipos/guardar}" method="post" th:object="${equipo}">
-        
+    <form th:action="@{/equipos/cargar}" method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label class="form-label">Selecciona archivo Excel (.xlsx)</label>
+        <input type="file" name="file" accept=".xlsx" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Cargar Equipos</button>
+    </form>
+
+
+    <form th:action="@{/guardar}" method="post" th:object="${equipo}">
+
+        <!-- Tipo de equipo -->
         <div class="mb-3">
-            <label class="form-label">Referencia:</label>
-            <input type="text" th:field="*{referencia}" class="form-control" required>
+            <label class="form-label">Tipo:</label>
+            <input type="text" th:field="*{tipo}" class="form-control" required>
         </div>
 
+        <!-- Serial -->
         <div class="mb-3">
             <label class="form-label">Serial:</label>
             <input type="text" th:field="*{serial}" class="form-control" required>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Estado:</label>
-            <select th:field="*{estado}" class="form-select" required>
-                <option th:value="true">Activo</option>
-                <option th:value="false">Inactivo</option>
-            </select>
-        </div>
-
+        <!-- Placa interna -->
         <div class="mb-3">
             <label class="form-label">Placa Interna:</label>
             <input type="text" th:field="*{placa}" class="form-control">
         </div>
 
+        <!-- Características -->
         <div class="mb-3">
-            <label class="form-label">Placa Proveedor:</label>
-            <input type="text" th:field="*{placaDeProveedor}" class="form-control">
+            <label class="form-label">Características:</label>
+            <input type="text" th:field="*{caracteristicas}" class="form-control">
         </div>
 
+        <!-- Estado -->
+        <label class="form-label">Estado:</label>
+        <select th:field="*{estado}" class="form-select" required>
+            <option value="" disabled selected>Seleccione un estado</option>
+            <option value="1">Activo</option>
+            <option value="0">Inactivo</option>
+        </select>
+
+        <!-- Modalidad de adquisición -->
         <div class="mb-3">
-            <label class="form-label">Empresa:</label>
-            <select th:field="*{empresa.id}" class="form-select" required>
-                <option value="" disabled selected>Seleccione una empresa</option>
-                <option th:each="empresa : ${empresas}" 
-                        th:value="${empresa.id}" 
-                        th:text="${empresa.nombre}"></option>
-            </select>
+            <label class="form-label">Modalidad de Adquisición:</label>
+            <input type="text" th:field="*{modalidadDeAdquisicion}" class="form-control">
         </div>
 
+        <!-- Costo de adquisición -->
         <div class="mb-3">
-            <label class="form-label">Proveedor:</label>
-            <select th:field="*{proveedor.id}" class="form-select" required>
-                <option value="" disabled selected>Seleccione un proveedor</option>
-                <option th:each="proveedor : ${proveedores}" 
-                        th:value="${proveedor.id}" 
-                        th:text="${proveedor.nombre}"></option>
-            </select>
+            <label class="form-label">Costo de Adquisición:</label>
+            <input type="number" step="0.01" th:field="*{costoDeAdquisicion}" class="form-control">
         </div>
 
+        <!-- Fecha de adquisición -->
+        <div class="mb-3">
+            <label class="form-label">Fecha de Adquisición:</label>
+            <input type="date" th:field="*{fechaDeAdquisicion}" class="form-control">
+        </div>
+
+        <!-- Remisión del proveedor -->
+        <div class="mb-3">
+            <label class="form-label">Remisión de Proveedor:</label>
+            <input type="text" th:field="*{remisionDeProveedor}" class="form-control">
+        </div>
+
+        <!-- Empresa -->
+        <label class="form-label">Empresa:</label>
+        <select th:field="*{empresa.id}" class="form-select" required>
+            <option value="-1" disabled selected>Seleccione una empresa</option>
+            <option th:each="empresa : ${empresas}" 
+                    th:value="${empresa.id}" 
+                    th:text="${empresa.nombre}">
+            </option>
+        </select>
+
+        <!-- Proveedor -->
+        <label class="form-label">Proveedor:</label> 
+        <select th:field="*{proveedor.id}" class="form-select" required>
+            <option value="-1" disabled selected>Seleccione un proveedor</option>
+            <option th:each="proveedor : ${proveedores}" 
+                    th:value="${proveedor.id}" 
+                    th:text="${proveedor.nombre}">
+            </option>
+        </select>
+
+
+        <!-- Botón -->
         <div class="d-grid">
             <button type="submit" class="btn btn-success">Guardar</button>
         </div>
+
     </form>
 </div>
 

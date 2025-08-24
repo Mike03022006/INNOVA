@@ -37,6 +37,7 @@ public class Alquiler {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cliente_id")
     private Empresa empresa;
+    
     @Column(name = "orden_cliente")
     private String ordenDeCliente;
         

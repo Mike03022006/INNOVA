@@ -5,74 +5,70 @@
     <title>Lista de Equipos</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        body {
-            background-color: #f8f9fa;
-            padding: 20px;
-        }
-        .table-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
-        .navbar-custom {
-            background-color: #343a40;
-        }
-        .navbar-custom a {
-            color: white !important;
-        }
-        .form-inline select,
-        .form-inline input {
-            margin-right: 10px;
-        }
+        body { background-color: #f8f9fa; padding: 20px; }
+        .table-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        .navbar-custom { background-color: #343a40; }
+        .navbar-custom a { color: white !important; }
+        .form-inline select, .form-inline input { margin-right: 10px; }
     </style>
 </head>
 <body>
 
-<!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom mb-4">
     <div class="container-fluid">
         <a class="navbar-brand" th:href="@{/}">← Menú Principal</a>
     </div>
 </nav>
+
 <div class="container table-container">
     <span class="text-muted" th:text="'Total: ' + ${#lists.size(equipos)} + ' equipos'">Total</span>
     <h1 class="mb-4 text-center">📋 Equipos Registrados</h1>
 
-            <form method="get" th:action="@{/equipos/buscar}" class="row g-2">
+    <!-- Form sticky: usa los valores del modelo (campo/operador/valor) -->
+    <form method="get" th:action="@{/equipos/buscar}" class="row g-2" id="form-busqueda">
         <div class="col-auto">
-            <select name="campo" class="form-select">
-            <option value="tipo">Tipo</option>
-            <option value="estado">Estado</option>
-            <option value="serial">Serial</option>
-            <option value="placa">Placa</option>
-            <option value="caracteristicas">Características</option>
-            <option value="modalidadDeAdquisicion">Modalidad</option>
-            <option value="remisionDeProveedor">Remisión proveedor</option>
-            <option value="fechaDeAdquisicion">Fecha de adquisición</option>
-            <!-- <option value="proveedorNombre">Proveedor (nombre)</option> -->
+            <select name="campo" class="form-select" th:value="${campo}">
+                <option value="tipo">Tipo</option>
+                <option value="estado">Estado</option>
+                <option value="serial">Serial</option>
+                <option value="placa">Placa</option>
+                <option value="caracteristicas">Características</option>
+                <option value="modalidadDeAdquisicion">Modalidad</option>
+                <option value="remisionDeProveedor">Remisión proveedor</option>
+                <option value="fechaDeAdquisicion">Fecha de adquisición</option>
             </select>
         </div>
 
         <div class="col-auto">
-            <select name="operador" class="form-select">
-            <option value="=">Igual</option>
-            <option value="contiene">Contiene</option>
+            <select name="operador" class="form-select" th:value="${operador}">
+                <option value="=">Igual</option>
+                <option value="contiene">Contiene</option>
             </select>
         </div>
 
         <div class="col-auto">
-            <input name="valor" class="form-control" placeholder="Valor a buscar">
+            <input name="valor" class="form-control" placeholder="Valor a buscar" th:value="${valor}">
         </div>
 
         <div class="col-auto">
-            <button class="btn btn-primary">Buscar</button>
+            <button class="btn btn-primary" type="submit">Buscar</button>
         </div>
-        </form>
 
+        <!-- Exporta con EXACTAMENTE los valores actuales.
+             Si valor está vacío, el backend exporta TODOS los equipos. -->
+        <div class="col-auto">
+            <a class="btn btn-outline-secondary"
+               th:href="@{/equipos/reporte(campo=${campo}, operador=${operador}, valor=${valor})}">
+                Exportar PDF
+            </a>
+            <!-- (opcional) Exportar todo en un clic:
+            <a class="btn btn-outline-dark ms-1" th:href="@{/equipos/reporte}">
+                Exportar TODO
+            </a> -->
+        </div>
+    </form>
 
-    
-    <div class="table-responsive">
+    <div class="table-responsive mt-3">
         <table class="table table-bordered table-hover align-middle">
             <thead class="table-dark">
                 <tr>
@@ -86,6 +82,7 @@
                     <th>Costo de Adquisición</th>
                     <th>Fecha de adquisición</th>
                     <th>Remisión</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -96,14 +93,19 @@
                     <td th:text="${equipo.tipo}"></td>
                     <td th:text="${equipo.caracteristicas}"></td>
                     <td th:switch="${equipo.estado}">
-                    <span class="badge bg-success" th:case="'1'">Activo</span>
-                    <span class="badge bg-secondary" th:case="'0'">Inactivo</span>
-                    <span class="badge bg-secondary" th:case="*">Inactivo</span>
+                        <span class="badge bg-success" th:case="'1'">Activo</span>
+                        <span class="badge bg-secondary" th:case="'0'">Inactivo</span>
+                        <span class="badge bg-secondary" th:case="*">Inactivo</span>
                     </td>
                     <td th:text="${equipo.modalidadDeAdquisicion}"></td>
                     <td th:text="${equipo.costoDeAdquisicion}"></td>
                     <td th:text="${equipo.fechaDeAdquisicion}"></td>
                     <td th:text="${equipo.remisionDeProveedor}"></td>
+                    <td>
+                        <a th:href="@{/equipos/eliminar/{id}(id=${equipo.id})}" class="btn btn-danger btn-sm"
+                           onclick="return confirm('¿Estás seguro de eliminar este equipo?');">Eliminar</a>
+                        <a th:href="@{/equipos/editar/{id}(id=${equipo.id})}" class="btn btn-warning btn-sm">Editar</a>
+                    </td>
                 </tr>
             </tbody>
         </table>

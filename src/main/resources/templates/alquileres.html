@@ -62,6 +62,13 @@
                 <td th:text="${alquiler.diasDeAlquiler}"></td>
                 <td th:text="${#numbers.formatDecimal(alquiler.valor, 0, 'POINT', 2, 'COMMA')}"></td>
                 <td th:text="${alquiler.proyecto}"></td>
+                <td>
+                    <a th:href="@{/alquileres/eliminar/{id}(id=${alquiler.id})}" 
+                    class="btn btn-danger btn-sm"
+                    onclick="return confirm('¿Estás seguro de eliminar este equipo?');">
+                    Eliminar
+                    </a>
+                </td>
             </tr>
         </tbody>
     </table>

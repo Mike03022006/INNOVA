@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title th:text="${titulo}">Reporte de Alquileres</title>
+  <style type="text/css">
+    @page { size: A4 landscape; margin: 14mm; }
+    body { font-family: sans-serif; font-size: 11px; }
+    h1 { font-size: 16px; margin: 0 0 8px 0; }
+    .meta { font-size: 10px; color: #555; margin-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    thead { display: table-header-group; }
+    tfoot { display: table-row-group; }
+    th, td { border: 1px solid #999; padding: 4px; vertical-align: top; }
+    th { background: #eee; text-align: left; }
+    td, th { word-wrap: break-word; -fs-word-wrap: break-word; overflow-wrap: break-word; white-space: normal; hyphens: auto; }
+    .wrap { word-break: break-all; }
+    .num   { text-align: right; white-space: nowrap; }
+    .fecha { white-space: nowrap; }
+    tr { page-break-inside: avoid; }
+  </style>
+</head>
+<body>
+  <h1 th:text="${titulo}">Reporte de Alquileres</h1>
+  <div class="meta" th:if="${subtitulo != null}" th:text="${subtitulo}">Todos</div>
+  <div class="meta" th:text="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm')}">2025-08-24 20:00</div>
+
+  <table>
+    <colgroup>
+      <col style="width:5%" />
+      <col style="width:12%" />
+      <col style="width:12%" />
+      <col style="width:12%" />
+      <col style="width:10%" />
+      <col style="width:10%" />
+      <col style="width:8%" />
+      <col style="width:8%" />
+      <col style="width:8%" />
+      <col style="width:15%" />
+    </colgroup>
+
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Equipo</th>
+        <th>Empresa</th>
+        <th>Proyecto</th>
+        <th>Orden Cliente</th>
+        <th>Referencia</th>
+        <th>Fecha Entrega</th>
+        <th>Días</th>
+        <th>Valor</th>
+        <th>Localización</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr th:each="a : ${alquileres}">
+        <td th:text="${a.id}">1</td>
+        <td class="wrap" th:text="${a.equipo != null ? a.equipo.serial : 'N/D'}">Serial</td>
+        <td class="wrap" th:text="${a.empresa != null ? a.empresa.nombre : 'N/D'}">Empresa</td>
+        <td th:text="${a.proyecto}">Proyecto</td>
+        <td th:text="${a.ordenDeCliente}">Orden</td>
+        <td th:text="${a.referencia}">Referencia</td>
+        <td class="fecha" th:text="${a.fechaDeEntrega}">2025-08-24</td>
+        <td th:text="${a.diasDeAlquiler}">0</td>
+        <td class="num" th:text="${a.valor}">0</td>
+        <td th:text="${a.localizacion}">Localización</td>
+      </tr>
+    </tbody>
+
+    <tfoot>
+      <tr>
+        <td colspan="10" th:text="'Total alquileres: ' + ${#lists.size(alquileres)}">Total alquileres: 0</td>
+      </tr>
+    </tfoot>
+  </table>
+</body>
+</html>

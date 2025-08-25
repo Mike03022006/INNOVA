@@ -1,0 +1,43 @@
+<form th:action="@{'/alquileres/actualizar/' + ${alquiler.id}}" th:object="${alquiler}" method="post">
+    
+    <label>Equipo:</label>
+    <input type="text" th:value="${alquiler.equipo.serial + ' - ' + alquiler.equipo.tipo}" readonly />
+
+    <label>Empresa:</label>
+    <input type="text" th:value="${alquiler.empresa.nombre}" readonly />
+
+    <label>Proyecto:</label>
+    <input type="text" th:field="*{proyecto}" />
+
+    <label>Orden de Cliente:</label>
+    <input type="text" th:field="*{ordenDeCliente}" />
+
+    <label>Referencia Odoo:</label>
+    <input type="text" th:field="*{referencia}" />
+
+    <label>Fecha de Entrega:</label>
+    <input type="date" th:field="*{fechaDeEntrega}" />
+
+    <label>Días de Alquiler:</label>
+    <input type="number" th:field="*{diasDeAlquiler}" />
+
+    <label>Localización:</label>
+    <input type="text" th:field="*{localizacion}" />
+
+    <label>Usuario:</label>
+    <input type="text" th:field="*{usuario}" />
+
+    <label>Administrativo:</label>
+    <input type="text" th:field="*{administrativo}" />
+
+    <label>Orden de Odoo:</label>
+    <input type="text" th:field="*{ordenDeOdoo}" />
+
+    <label>Estado:</label>
+    <select th:field="*{estado}">
+        <option th:value="true" th:text="'Activo'"></option>
+        <option th:value="false" th:text="'Inactivo'"></option>
+    </select>
+
+    <button type="submit">Actualizar</button>
+</form>

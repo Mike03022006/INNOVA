@@ -41,8 +41,8 @@ public class EquipoController {
     @Autowired
     private SpringTemplateEngine templateEngine;
 
-@GetMapping("/equipos")
-public String mostrarEquipos(
+    @GetMapping("/equipos")
+    public String mostrarEquipos(
         @RequestParam(required = false) String campo,
         @RequestParam(required = false) String operador,
         @RequestParam(required = false) String valor,
@@ -58,15 +58,12 @@ public String mostrarEquipos(
 
     model.addAttribute("equipos", lista);
 
-    // valores "sticky" para el formulario
     model.addAttribute("campo",    hayFiltro ? campo    : "tipo");
     model.addAttribute("operador", hayFiltro ? operador : "=");
     model.addAttribute("valor",    hayFiltro ? valor    : "");
 
     return "equipos";
-}
-
-
+    }
 
     @GetMapping("/equipos/crear")
     public String mostrarFormularioCrearEquipo(Model model){
@@ -113,8 +110,8 @@ public String mostrarEquipos(
     }
 
 
-@GetMapping("/equipos/buscar")
-public String buscar(
+    @GetMapping("/equipos/buscar")
+    public String buscar(
         @RequestParam String campo,
         @RequestParam String operador,
         @RequestParam String valor) {
@@ -124,7 +121,7 @@ public String buscar(
               + "&valor=" + URLEncoder.encode(valor, StandardCharsets.UTF_8);
 
     return "redirect:/equipos?" + qs;
-}
+    }
 
 
     @GetMapping("/equipos/eliminar/{id}")
@@ -173,8 +170,6 @@ public ResponseEntity<?> generarReporte(
             ? equipoService.buscarUniversal(campo, operador, valor)
             : equipoService.obtenerTodos();
 
-    // (si usas zwsWrap para romper textos largos, aplícalo aquí como ya lo tienes)
-
     var ctx = new org.thymeleaf.context.Context();
     ctx.setVariable("equipos", equipos);
     ctx.setVariable("titulo", "Reporte de Equipos");
@@ -209,5 +204,4 @@ public ResponseEntity<?> generarReporte(
                 .body("Error generando PDF: " + ex.getMessage());
     }
 }
-
 }

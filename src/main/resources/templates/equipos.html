@@ -54,17 +54,13 @@
             <button class="btn btn-primary" type="submit">Buscar</button>
         </div>
 
-        <!-- Exporta con EXACTAMENTE los valores actuales.
-             Si valor está vacío, el backend exporta TODOS los equipos. -->
+
         <div class="col-auto">
             <a class="btn btn-outline-secondary"
                th:href="@{/equipos/reporte(campo=${campo}, operador=${operador}, valor=${valor})}">
                 Exportar PDF
             </a>
-            <!-- (opcional) Exportar todo en un clic:
-            <a class="btn btn-outline-dark ms-1" th:href="@{/equipos/reporte}">
-                Exportar TODO
-            </a> -->
+
         </div>
     </form>
 

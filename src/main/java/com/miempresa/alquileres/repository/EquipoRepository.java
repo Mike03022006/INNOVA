@@ -14,6 +14,7 @@ import com.miempresa.alquileres.model.Equipo;
 public interface EquipoRepository extends JpaRepository<Equipo, Long>{
 
     List<Equipo> findByProveedorNombreContaining(String nombreProveedor);
+
     List<Equipo> findBySerial(String serial);
     List<Equipo> findBySerialContaining(String serial);
 
@@ -47,11 +48,8 @@ public interface EquipoRepository extends JpaRepository<Equipo, Long>{
         SELECT e FROM Equipo e
         WHERE e.id NOT IN (
             SELECT a.equipo.id FROM Alquiler a
-            WHERE a.fechaDeDevolucion IS NULL OR a.fechaDeDevolucion >= CURRENT_DATE
-        )
-    """)
+            WHERE a.fechaDeDevolucion IS NULL OR a.fechaDeDevolucion >= CURRENT_DATE)""")
     List<Equipo> findEquiposDisponibles();
-    
 }
 
 

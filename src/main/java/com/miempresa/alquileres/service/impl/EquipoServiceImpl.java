@@ -58,7 +58,6 @@ public class EquipoServiceImpl implements EquipoService {
     
 @Override
 public List<Equipo> buscarUniversal(String campo, String operador, String valor) {
-    // normaliza operador para evitar problemas de mayúsculas/espacios
     String op = operador == null ? "=" : operador.trim().toLowerCase();
     String v  = valor == null ? "" : valor.trim();
 
@@ -104,7 +103,6 @@ public List<Equipo> buscarUniversal(String campo, String operador, String valor)
             if ("=".equals(op)) {
                 yield equipoRepository.findByProveedorNombre(v);
             } else {
-                // requiere el método containing en el repo (ver punto 2)
                 try {
                     yield equipoRepository.findByProveedorNombreContaining(v);
                 } catch (Exception e) {
@@ -113,9 +111,10 @@ public List<Equipo> buscarUniversal(String campo, String operador, String valor)
             }
         }
 
-        default -> java.util.List.of();
+    default -> java.util.List.of();
     };
 }
+
 
 @Override
 @Transactional

@@ -37,6 +37,52 @@
     <h1 class="mb-4">Lista de Alquileres</h1>
     <span class="text-muted" th:text="'Total: ' + ${#lists.size(alquileres)} + ' alquileres'">Total</span>
 
+    <!-- Formulario de búsqueda -->
+    <form method="get" th:action="@{/alquileres/buscar}" class="row g-2 mb-3">
+        <div class="col-auto">
+            <select name="campo" class="form-select" th:value="${campo}">
+                <option value="ordenDeCliente">Orden de Cliente</option>
+                <option value="referencia">Referencia</option>
+                <option value="localizacion">Localización</option>
+                <option value="fechaDeEntrega">Fecha de Entrega</option>
+                <option value="fechaDeDevolucion">Fecha de Devolución</option>
+                <option value="diasDeAlquiler">Días de Alquiler</option>
+                <option value="valor">Valor</option>
+                <option value="usuario">Usuario</option>
+                <option value="proyecto">Proyecto</option>
+                <option value="ordenDeOdoo">Orden de Odoo</option>
+                <option value="administrativo">Administrativo</option>
+                <option value="estado">Estado</option>
+                <option value="renovaciones">Renovaciones</option>
+                <option value="serial">Serial</option>
+                <option value="placa">Placa</option>
+                <option value="empresa">Empresa</option>
+            </select>
+        </div>
+
+        <div class="col-auto">
+            <select name="operador" class="form-select" th:value="${operador}">
+                <option value="=">Igual</option>
+                <option value="contiene">Contiene</option>
+            </select>
+        </div>
+
+        <div class="col-auto">
+            <input name="valor" class="form-control" placeholder="Valor a buscar" th:value="${valor}">
+        </div>
+
+        <div class="col-auto">
+            <button class="btn btn-primary" type="submit">Buscar</button>
+        </div>
+                <div class="col-auto">
+            <a class="btn btn-outline-secondary"
+               th:href="@{/alquileres/reporte(campo=${campo}, operador=${operador}, valor=${valor})}">
+                Exportar PDF
+            </a>
+
+        </div>
+    </form>
+
     <table class="table table-bordered table-hover table-striped">
         <thead class="table-dark">
             <tr>
@@ -44,11 +90,18 @@
                 <th>Serial</th>
                 <th>Placa</th>
                 <th>Empresa</th>
+                <th>Orden de Cliente</th>
+                <th>Referencia</th>
+                <th>Localizacion</th>
                 <th>Fecha Entrega</th>
                 <th>Fecha Devolución</th>
                 <th>Días</th>
                 <th>Valor</th>
                 <th>Proyecto</th>
+                <th>Usuario</th>
+                <th>Orden de Odoo</th>
+                <th>Estado</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -57,17 +110,27 @@
                 <td th:text="${alquiler.equipo?.serial}"></td>
                 <td th:text="${alquiler.equipo?.placa}"></td>
                 <td th:text="${alquiler.empresa?.nombre}"></td>
+                <td th:text="${alquiler.ordenDeCliente}"></td>
+                <td th:text="${alquiler.referencia}"></td>
+                <td th:text="${alquiler.localizacion}"></td>
                 <td th:text="${alquiler.fechaDeEntrega != null ? #temporals.format(alquiler.fechaDeEntrega, 'dd/MM/yyyy') : ''}"></td>
                 <td th:text="${alquiler.fechaDeDevolucion != null ? #temporals.format(alquiler.fechaDeDevolucion, 'dd/MM/yyyy') : ''}"></td>
                 <td th:text="${alquiler.diasDeAlquiler}"></td>
                 <td th:text="${#numbers.formatDecimal(alquiler.valor, 0, 'POINT', 2, 'COMMA')}"></td>
                 <td th:text="${alquiler.proyecto}"></td>
+                <td th:text="${alquiler.usuario}"></td>
+                <td th:text="${alquiler.ordenDeOdoo}"></td>
+                <td>
+                    <span th:if="${alquiler.estado}" class="badge bg-success">Activo</span>
+                    <span th:unless="${alquiler.estado}" class="badge bg-secondary">Inactivo</span>
+                </td>
                 <td>
                     <a th:href="@{/alquileres/eliminar/{id}(id=${alquiler.id})}" 
-                    class="btn btn-danger btn-sm"
-                    onclick="return confirm('¿Estás seguro de eliminar este equipo?');">
-                    Eliminar
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('¿Estás seguro de eliminar este alquiler?');">
+                        Eliminar
                     </a>
+                     <a th:href="@{/alquileres/editar/{id}(id=${alquiler.id})}" class="btn btn-warning btn-sm">Editar</a>
                 </td>
             </tr>
         </tbody>

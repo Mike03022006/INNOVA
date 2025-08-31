@@ -2,18 +2,32 @@ package com.miempresa.alquileres.service.impl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+
+
+import org.springframework.transaction.annotation.Transactional;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.miempresa.alquileres.model.Alquiler;
+import com.miempresa.alquileres.model.Empresa;
 import com.miempresa.alquileres.model.Equipo;
 import com.miempresa.alquileres.repository.AlquilerRepository;
 import com.miempresa.alquileres.repository.EmpresaRepository;
 import com.miempresa.alquileres.repository.EquipoRepository;
 import com.miempresa.alquileres.service.AlquilerService;
-
+import com.miempresa.alquileres.service.EmpresaService;
 
 
 @Service
@@ -24,6 +38,9 @@ public class AlquilerServiceImpl implements AlquilerService {
 
     @Autowired
     private EmpresaRepository empresaRepository;
+
+    @Autowired
+    private EmpresaService empresaService;
 
 
     @Autowired
@@ -194,5 +211,157 @@ public void guardarAlquiler(Alquiler alquiler) {
 public void eliminarPorId(Long id) {
     alquilerRepository.deleteById(id);
 }
+
+@Override
+@Transactional
+public void cargarAlquileresDesdeExcel(MultipartFile file) {
+    try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
+        Sheet sheet = workbook.getSheetAt(0);
+
+        for (Row row : sheet) {
+            if (row.getRowNum() == 0) continue; // Saltar encabezado
+
+            // ---------------- Verificar si la fila está vacía ----------------
+            boolean filaVacia = true;
+            for (Cell cell : row) {
+                String valor = getStringCellValue(cell);
+                if (valor != null && !valor.isEmpty()) {
+                    filaVacia = false;
+                    break;
+                }
+            }
+            if (filaVacia) continue;
+
+            // ---------------- Serial (Equipo) ----------------
+            String serial = getStringCellValue(row.getCell(0));
+            if (serial == null) {
+                System.out.println("Fila " + row.getRowNum() + ": serial vacío, se omite");
+                continue;
+            }
+
+            Equipo equipo = equipoRepository.findBySerial(serial).stream().findFirst().orElse(null);
+            if (equipo == null) {
+                System.out.println("Fila " + row.getRowNum() + ": equipo no encontrado con serial " + serial);
+                continue;
+            }
+
+            // ---------------- Cliente ID ----------------
+            Long empresaId = getLongCellValue(row.getCell(1));
+            Empresa empresa = (empresaId != null) ? empresaService.ObtenerPorId(empresaId) : null;
+            if (empresa == null) {
+                System.out.println("Fila " + row.getRowNum() + ": empresa no encontrada con ID " + empresaId);
+                continue;
+            }
+
+            Alquiler alquiler = new Alquiler();
+            alquiler.setEquipo(equipo);
+            alquiler.setEmpresa(empresa);
+
+
+            // ---------------- Orden cliente ----------------
+            alquiler.setOrdenDeCliente(getStringCellValue(row.getCell(2)));
+
+            // ---------------- Referencia Odoo ----------------
+            alquiler.setReferencia(getStringCellValue(row.getCell(3)));
+
+            // ---------------- Fecha entrega ----------------
+            LocalDate fechaEntrega = getDateCellValue(row.getCell(4));
+            alquiler.setFechaDeEntrega(fechaEntrega);
+
+            // ---------------- Fecha devolución ----------------
+            LocalDate fechaDevolucion = getDateCellValue(row.getCell(5));
+            alquiler.setFechaDeDevolucion(fechaDevolucion);
+
+            // ---------------- Días de alquiler ----------------
+            if (fechaEntrega != null && fechaDevolucion != null) {
+                long dias = ChronoUnit.DAYS.between(fechaEntrega, fechaDevolucion);
+                alquiler.setDiasDeAlquiler((int) dias);
+            }
+
+            // ---------------- Valor ----------------
+            Double valor = getNumericCellValue(row.getCell(6));
+            if (valor != null) alquiler.setValor(BigDecimal.valueOf(valor));
+
+            // ---------------- Localización ----------------
+            alquiler.setLocalizacion(getStringCellValue(row.getCell(7)));
+
+            // ---------------- Usuario ----------------
+            alquiler.setUsuario(getStringCellValue(row.getCell(8)));
+
+            // ---------------- Proyecto ----------------
+            alquiler.setProyecto(getStringCellValue(row.getCell(9)));
+
+            // ---------------- Orden Odoo ----------------
+            alquiler.setOrdenDeOdoo(getStringCellValue(row.getCell(10)));
+
+            // ---------------- Administrativo ----------------
+            alquiler.setAdministrativo(getStringCellValue(row.getCell(11)));
+
+            // ---------------- Estado ----------------
+            String estado = getStringCellValue(row.getCell(12));
+            alquiler.setEstado((estado != null && (estado.equalsIgnoreCase("1") || estado.equalsIgnoreCase("true"))));
+
+            // ---------------- Número de renovaciones ----------------
+            Long renovaciones = getLongCellValue(row.getCell(13));
+            if (renovaciones != null) alquiler.setNumeroDeRenovaciones(renovaciones.intValue());
+
+            // Guardar alquiler
+            alquilerRepository.save(alquiler);
+            System.out.println("Fila " + row.getRowNum() + " procesada: serial " + serial);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        throw new RuntimeException("Error al procesar el archivo Excel de alquileres");
+    }
+}
+// ---------------- Funciones auxiliares ----------------
+private String getStringCellValue(Cell cell) {
+    if (cell == null) return null;
+    return switch (cell.getCellType()) {
+        case STRING -> cell.getStringCellValue().trim();
+        case NUMERIC -> String.valueOf((long) cell.getNumericCellValue());
+        case BOOLEAN -> String.valueOf(cell.getBooleanCellValue());
+        default -> null;
+    };
+}
+
+private Double getNumericCellValue(Cell cell) {
+    if (cell == null) return null;
+    return switch (cell.getCellType()) {
+        case NUMERIC -> cell.getNumericCellValue();
+        case STRING -> {
+            try {
+                yield Double.parseDouble(cell.getStringCellValue().trim());
+            } catch (Exception e) {
+                yield null;
+            }
+        }
+        default -> null;
+    };
+}
+
+private Long getLongCellValue(Cell cell) {
+    Double value = getNumericCellValue(cell);
+    return (value != null) ? value.longValue() : null;
+}
+
+private LocalDate getDateCellValue(Cell cell) {
+    if (cell == null) return null;
+    try {
+        if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
+            return cell.getLocalDateTimeCellValue().toLocalDate();
+        } else if (cell.getCellType() == CellType.STRING) {
+            return LocalDate.parse(
+                cell.getStringCellValue().trim(),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            );
+        }
+    } catch (Exception e) {
+        return null;
+    }
+    return null;
+}
+
 
 }

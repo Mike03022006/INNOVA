@@ -14,6 +14,4 @@ public interface EquipoService {
     void cargarDesdeExcel(MultipartFile file) throws Exception;
     void eliminarPorId(Long id);
     List<Equipo> obtenerEquiposDisponibles();
-
-
 }

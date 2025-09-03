@@ -1,86 +1,218 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Gestión de Alquileres</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            padding: 20px;
-        }
-        h1 {
-            color: #333;
-        }
-        form {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            max-width: 400px;
-        }
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            font-weight: bold;
-        }
-        input, select, button {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            background: #007BFF;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Gestión de Alquileres</title>
+
+  <!-- Bootstrap + Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --mint:#e9fff5;   /* muy claro */
+      --green:#66c49a;  /* medio */
+      --teal:#205f77;   /* teal */
+      --navy:#0c3863;   /* navy */
+      --ink:#0f2430;    /* texto oscuro */
+      --card:#ffffff;   /* fondos */
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      font-family:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      margin:0;
+      padding-top:72px; /* espacio para navbar fija */
+      background:
+        radial-gradient(1100px 700px at 0% -10%, rgba(102,196,154,.18), transparent 60%),
+        radial-gradient(900px 600px at 110% 0%, rgba(32,95,119,.18), transparent 60%),
+        linear-gradient(180deg, #f6fffb 0%, #f1fffb 100%);
+    }
+
+    /* NAVBAR */
+    .navbar-branding{
+      background: linear-gradient(90deg, var(--navy) 0%, var(--teal) 50%, var(--green) 100%);
+    }
+    .navbar .navbar-brand, .navbar .nav-link{ color:#e9fff5 !important; }
+    .navbar .navbar-brand:hover, .navbar .nav-link:hover{ color:#fff !important; }
+    .user-avatar{ width:36px; height:36px; border-radius:50%; object-fit:cover; }
+    .icon-wrap{ position:relative; display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.12); color:#fff; }
+    .notification-badge{
+      position:absolute; top:-4px; right:-4px;
+      background:var(--green); color:#04311e; font-weight:700;
+      font-size:.7rem; padding:2px 6px; border-radius:999px; border:1px solid rgba(0,0,0,.1);
+    }
+
+    /* HEADER DE PÁGINA */
+    .page-title{
+      font-weight:800; letter-spacing:.2px;
+      background: linear-gradient(90deg, var(--teal), var(--navy));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      margin-bottom:.75rem;
+    }
+    .page-sub{ color:rgba(15,36,48,.7); margin-bottom:1.5rem; }
+
+    /* CARDS */
+    .card-ui{
+      background:var(--card);
+      border:0; border-radius:16px;
+      box-shadow:0 6px 18px rgba(12,56,99,.08);
+      overflow:hidden;
+    }
+    .accent-bar{ height:6px; background:linear-gradient(90deg, var(--green), var(--teal), var(--navy)); }
+    .card-ui .card-body{ padding:1.25rem; }
+
+    /* FORM */
+    label{ font-weight:600; margin-top:.25rem; }
+    .form-control, .form-select, input[type="date"], input[type="number"]{
+      border-radius:10px; border:1px solid rgba(12,56,99,.18);
+      padding:.65rem .8rem;
+    }
+    .form-control:focus, .form-select:focus, input[type="date"]:focus, input[type="number"]:focus{
+      border-color: var(--green);
+      box-shadow:0 0 0 .25rem rgba(102,196,154,.35);
+      outline:none;
+    }
+
+    /* BOTONES */
+    .btn-brand{
+      background:var(--teal); color:#eafff8; border:none; border-radius:999px; font-weight:700;
+      padding:.65rem 1rem;
+    }
+    .btn-brand:hover{ background:var(--navy); color:#fff; }
+    .btn-ghost{
+      background:transparent; color:var(--teal); border:2px solid var(--teal);
+      border-radius:999px; font-weight:700; padding:.6rem 1rem;
+    }
+    .btn-ghost:hover{ background:var(--teal); color:#fff; }
+
+    /* GRID */
+    .grid{ display:grid; gap:1rem; }
+    @media (min-width: 992px){
+      .grid-2{ grid-template-columns: 1fr 1fr; }
+      .grid-3{ grid-template-columns: repeat(3, 1fr); }
+    }
+
+    /* DROPZONE */
+    .drop{
+      display:flex; align-items:center; justify-content:center; gap:.75rem;
+      border:2px dashed rgba(32,95,119,.25);
+      background:rgba(233,255,245,.6);
+      border-radius:14px; padding:1rem; cursor:pointer; text-align:center;
+      transition: background .2s ease, border-color .2s ease;
+    }
+    .drop:hover{ background:rgba(233,255,245,.9); border-color:var(--green); }
+    .hidden-input{ position:absolute; left:-9999px; }
+  </style>
 </head>
 <body>
 
-<h1>Gestión de Alquileres</h1>
+<!-- NAVBAR degradada -->
+<nav class="navbar navbar-expand-lg navbar-dark navbar-branding fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" th:href="@{/}">
+      <i class="bi bi-arrow-left-circle me-2"></i>Menú Principal
+    </a>
 
-<!-- Formulario para crear alquiler manualmente -->
-<form th:action="@{/alquileres/crear}" th:object="${alquiler}" method="post">
-    <label>Equipo:</label>
-    <select th:field="*{equipo}" required>
-        <option th:each="e : ${equipos}" th:value="${e.id}" th:text="${e.serial + ' - ' + e.placa}"></option>
-    </select>
+    <div class="ms-auto d-flex align-items-center gap-3">
+      <div class="icon-wrap">
+        <i class="bi bi-bell fs-5"></i>
+        <span class="notification-badge">4</span>
+      </div>
+      <div class="icon-wrap">
+        <i class="bi bi-chat fs-5"></i>
+        <span class="notification-badge">2</span>
+      </div>
+      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Usuario" class="user-avatar">
+    </div>
+  </div>
+</nav>
 
-    <label>Empresa:</label>
-    <select th:field="*{empresa}" required>
-        <option th:each="c : ${empresas}" th:value="${c.id}" th:text="${c.nombre}"></option>
-    </select>
+<main class="container">
+  <h1 class="page-title">Gestión de Alquileres</h1>
+  <p class="page-sub">Crea un alquiler manualmente o carga varios desde Excel. Fácil, bonito y sin llorar. 😎</p>
 
-    <label>Fecha de entrega:</label>
-    <input type="date" th:field="*{fechaDeEntrega}" required/>
+  <div class="grid grid-2">
+    <!-- Crear alquiler manualmente -->
+    <section class="card-ui">
+      <div class="accent-bar"></div>
+      <div class="card-body">
+        <h5 class="mb-3"><i class="bi bi-clipboard-plus me-1"></i> Crear alquiler</h5>
 
-    <label>Días de alquiler:</label>
-    <input type="number" th:field="*{diasDeAlquiler}" required/>
+        <form th:action="@{/alquileres/crear}" th:object="${alquiler}" method="post" class="grid">
+          <div>
+            <label>Equipo</label>
+            <select th:field="*{equipo}" class="form-select" required>
+              <option th:each="e : ${equipos}" th:value="${e.id}" th:text="${e.serial + ' - ' + e.placa}"></option>
+            </select>
+          </div>
 
-    <label>Valor:</label>
-    <input type="number" step="0.01" th:field="*{valor}" required/>
+          <div>
+            <label>Empresa</label>
+            <select th:field="*{empresa}" class="form-select" required>
+              <option th:each="c : ${empresas}" th:value="${c.id}" th:text="${c.nombre}"></option>
+            </select>
+          </div>
 
-    <button type="submit">Guardar Alquiler</button>
-</form>
+          <div class="grid grid-3">
+            <div>
+              <label>Fecha de entrega</label>
+              <input type="date" th:field="*{fechaDeEntrega}" class="form-control" required>
+            </div>
+            <div>
+              <label>Días de alquiler</label>
+              <input type="number" th:field="*{diasDeAlquiler}" class="form-control" min="1" required>
+            </div>
+            <div>
+              <label>Valor</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="number" step="0.01" th:field="*{valor}" class="form-control" min="0" required>
+              </div>
+            </div>
+          </div>
 
-<!-- Formulario para cargar alquileres desde Excel -->
-<form th:action="@{/alquileres/cargar}" method="post" enctype="multipart/form-data">
-    <label for="file">Cargar archivo Excel:</label>
-    <input type="file" name="file" accept=".xlsx,.xls" required>
-    <button type="submit">Subir Excel</button>
-</form>
-<a href="/plantillas/plantilla_alquileres.xlsx" download>
-    <button type="button">Descargar Plantilla Excel</button>
-</a>
+          <div class="d-flex gap-2 mt-2">
+            <button type="submit" class="btn-brand"><i class="bi bi-check2-circle me-1"></i>Guardar alquiler</button>
+            <a th:href="@{/}" class="btn-ghost"><i class="bi bi-arrow-left me-1"></i>Volver</a>
+          </div>
+        </form>
+      </div>
+    </section>
 
+    <!-- Cargar alquileres desde Excel -->
+    <section class="card-ui">
+      <div class="accent-bar"></div>
+      <div class="card-body">
+        <h5 class="mb-3"><i class="bi bi-file-earmark-spreadsheet me-1"></i> Cargar desde Excel</h5>
+
+        <form th:action="@{/alquileres/cargar}" method="post" enctype="multipart/form-data" class="grid">
+          <input id="file" class="hidden-input" type="file" name="file" accept=".xlsx,.xls" required>
+          <label for="file" class="drop">
+            <i class="bi bi-cloud-arrow-up fs-4"></i>
+            <span>
+              <strong>Selecciona</strong> o arrastra tu archivo <em>.xlsx / .xls</em>
+            </span>
+          </label>
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn-brand flex-grow-1"><i class="bi bi-upload me-1"></i>Subir Excel</button>
+            <a href="/plantillas/plantilla_alquileres.xlsx" download class="btn-ghost">
+              <i class="bi bi-download me-1"></i>Plantilla
+            </a>
+          </div>
+        </form>
+
+        <small class="text-muted d-block mt-2">
+          Tip: asegúrate de que las columnas de la plantilla coincidan con los campos del sistema.
+        </small>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- JS Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

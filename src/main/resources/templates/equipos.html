@@ -1,111 +1,213 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Lista de Equipos</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        body { background-color: #f8f9fa; padding: 20px; }
-        .table-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-        .navbar-custom { background-color: #343a40; }
-        .navbar-custom a { color: white !important; }
-        .form-inline select, .form-inline input { margin-right: 10px; }
-    </style>
+  <meta charset="UTF-8">
+  <title>📋 Equipos Registrados</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- Bootstrap + Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  <style>
+    :root{
+      --mint:#e9fff5;   /* muy claro */
+      --green:#66c49a;  /* medio */
+      --teal:#205f77;   /* teal */
+      --navy:#0c3863;   /* navy */
+      --ink:#0f2430;    /* texto oscuro */
+      --card:#ffffff;   /* fondos */
+    }
+
+    body{ background: var(--mint); color: var(--ink); }
+    .bg-brand { background: linear-gradient(90deg, var(--navy), var(--teal)); }
+    .text-brand { color: var(--navy); }
+    .shadow-soft { box-shadow: 0 10px 30px rgba(12,56,99,0.12); }
+    .rounded-2xl{ border-radius: 16px; }
+
+    .navbar { position: sticky; top:0; z-index:1030; }
+    .navbar .nav-link, .navbar-brand { color:#fff !important; }
+
+    .btn-cta{
+      border:none; font-weight:600; padding:10px 14px;
+      border-radius:12px;
+      background: linear-gradient(180deg, var(--green), var(--teal));
+      color:#fff;
+      transition: transform .06s ease, box-shadow .2s ease;
+    }
+    .btn-cta:hover{ transform: translateY(-1px); box-shadow:0 10px 20px rgba(12,56,99,.18); }
+    .btn-cta.alt1{ background: linear-gradient(180deg, #5aaee0, var(--navy)); }
+    .btn-cta.dark { background: linear-gradient(180deg, #2f3640, #1f2327); }
+
+    .card-surface{
+      background: var(--card);
+      border: 1px solid rgba(0,0,0,.06);
+      border-radius: 16px;
+    }
+    .table thead th{
+      background: linear-gradient(90deg, var(--navy), var(--teal));
+      color:#fff; border: none;
+    }
+    .table tbody tr:hover{ background: #f3faf7; }
+    .status-badge{ font-size:.85rem; }
+  </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark navbar-custom mb-4">
-    <div class="container-fluid">
-        <a class="navbar-brand" th:href="@{/}">← Menú Principal</a>
-    </div>
-</nav>
+<!-- NAV -->
+<nav class="navbar navbar-expand-lg bg-brand shadow-soft">
+  <div class="container-fluid px-3">
+    <a class="navbar-brand fw-bold" th:href="@{/}">
+      <i class="bi bi-box2-fill me-2"></i>SISTEMA DE ALQUILERES INNOVASER
+    </a>
 
-<div class="container table-container">
-    <span class="text-muted" th:text="'Total: ' + ${#lists.size(equipos)} + ' equipos'">Total</span>
-    <h1 class="mb-4 text-center">📋 Equipos Registrados</h1>
-
-    <!-- Form sticky: usa los valores del modelo (campo/operador/valor) -->
-    <form method="get" th:action="@{/equipos/buscar}" class="row g-2" id="form-busqueda">
-        <div class="col-auto">
-            <select name="campo" class="form-select" th:value="${campo}">
-                <option value="tipo">Tipo</option>
-                <option value="estado">Estado</option>
-                <option value="serial">Serial</option>
-                <option value="placa">Placa</option>
-                <option value="caracteristicas">Características</option>
-                <option value="modalidadDeAdquisicion">Modalidad</option>
-                <option value="remisionDeProveedor">Remisión proveedor</option>
-                <option value="fechaDeAdquisicion">Fecha de adquisición</option>
-            </select>
-        </div>
-
-        <div class="col-auto">
-            <select name="operador" class="form-select" th:value="${operador}">
-                <option value="=">Igual</option>
-                <option value="contiene">Contiene</option>
-            </select>
-        </div>
-
-        <div class="col-auto">
-            <input name="valor" class="form-control" placeholder="Valor a buscar" th:value="${valor}">
-        </div>
-
-        <div class="col-auto">
-            <button class="btn btn-primary" type="submit">Buscar</button>
-        </div>
-
-
-        <div class="col-auto">
-            <a class="btn btn-outline-secondary"
-               th:href="@{/equipos/reporte(campo=${campo}, operador=${operador}, valor=${valor})}">
-                Exportar PDF
-            </a>
-
-        </div>
+    <form class="d-none d-lg-block ms-3 nav-search" role="search" th:action="@{/buscar}">
+      <input name="q" type="search" placeholder="Buscar equipos, clientes, alquileres…" />
     </form>
 
-    <div class="table-responsive mt-3">
-        <table class="table table-bordered table-hover align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Serial</th>
-                    <th>Placa</th>
-                    <th>Tipo</th>
-                    <th>Características</th>
-                    <th>Estado</th>
-                    <th>Modalidad</th>
-                    <th>Costo de Adquisición</th>
-                    <th>Fecha de adquisición</th>
-                    <th>Remisión</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="equipo : ${equipos}">
-                    <td th:text="${equipo.id}"></td>
-                    <td th:text="${equipo.serial}"></td>
-                    <td th:text="${equipo.placa}"></td>
-                    <td th:text="${equipo.tipo}"></td>
-                    <td th:text="${equipo.caracteristicas}"></td>
-                    <td th:switch="${equipo.estado}">
-                        <span class="badge bg-success" th:case="'1'">Activo</span>
-                        <span class="badge bg-secondary" th:case="'0'">Inactivo</span>
-                        <span class="badge bg-secondary" th:case="*">Inactivo</span>
-                    </td>
-                    <td th:text="${equipo.modalidadDeAdquisicion}"></td>
-                    <td th:text="${equipo.costoDeAdquisicion}"></td>
-                    <td th:text="${equipo.fechaDeAdquisicion}"></td>
-                    <td th:text="${equipo.remisionDeProveedor}"></td>
-                    <td>
-                        <a th:href="@{/equipos/eliminar/{id}(id=${equipo.id})}" class="btn btn-danger btn-sm"
-                           onclick="return confirm('¿Estás seguro de eliminar este equipo?');">Eliminar</a>
-                        <a th:href="@{/equipos/editar/{id}(id=${equipo.id})}" class="btn btn-warning btn-sm">Editar</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="topbar">
+      <ul class="navbar-nav align-items-center gap-2">
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/}"><i class="bi bi-arrow-left-circle me-1"></i>Menú Principal</a>
+        </li>
+
+        <!-- Usuario -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle me-1"></i>
+            <span th:text="${usuarioNombre} ?: ${#authentication?.name}">Usuario</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <li><a class="dropdown-item" th:href="@{/perfil}"><i class="bi bi-gear me-2"></i>Perfil</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <form th:action="@{/logout}" method="post" class="px-3">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button class="btn btn-sm btn-danger w-100" type="submit">
+                  <i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión
+                </button>
+              </form>
+            </li>
+          </ul>
+        </li>
+      </ul>
     </div>
+  </div>
+</nav>
+
+<!-- CONTENIDO -->
+<div class="container-fluid main-wrap">
+  <div class="card-surface p-3 p-md-4 shadow-soft">
+
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+      <div>
+        <h1 class="h3 fw-bold text-brand mb-0">
+          <i class="bi bi-clipboard2-data me-2"></i>Equipos Registrados
+        </h1>
+        <small class="text-muted" th:text="'Total: ' + ${#lists.size(equipos)} + ' equipos'">Total</small>
+      </div>
+      <div class="d-flex gap-2 mt-2 mt-md-0">
+        <a th:href="@{/equipos/crear}" class="btn btn-cta">
+          <i class="bi bi-plus-circle me-1"></i> Nuevo Equipo
+        </a>
+        <a class="btn btn-cta alt1"
+           th:href="@{/equipos/reporte(campo=${campo}, operador=${operador}, valor=${valor})}">
+          <i class="bi bi-filetype-pdf me-1"></i> Exportar PDF
+        </a>
+      </div>
+    </div>
+
+    <!-- FILTROS -->
+    <form method="get" th:action="@{/equipos/buscar}" class="row gy-2 gx-2 align-items-end">
+      <div class="col-12 col-md-3">
+        <label class="form-label fw-semibold">Campo</label>
+        <select name="campo" class="form-select" th:value="${campo}">
+          <option value="tipo">Tipo</option>
+          <option value="estado">Estado</option>
+          <option value="serial">Serial</option>
+          <option value="placa">Placa</option>
+          <option value="caracteristicas">Características</option>
+          <option value="modalidadDeAdquisicion">Modalidad</option>
+          <option value="remisionDeProveedor">Remisión proveedor</option>
+          <option value="fechaDeAdquisicion">Fecha de adquisición</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-3">
+        <label class="form-label fw-semibold">Operador</label>
+        <select name="operador" class="form-select" th:value="${operador}">
+          <option value="=">Igual</option>
+          <option value="contiene">Contiene</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <label class="form-label fw-semibold">Valor</label>
+        <input name="valor" class="form-control" placeholder="Valor a buscar" th:value="${valor}">
+      </div>
+
+      <div class="col-12 col-md-2 d-grid">
+        <button class="btn btn-cta" type="submit"><i class="bi bi-search me-1"></i> Buscar</button>
+      </div>
+    </form>
+
+    <!-- TABLA -->
+    <div class="table-responsive mt-3">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Serial</th>
+            <th>Placa</th>
+            <th>Tipo</th>
+            <th>Características</th>
+            <th>Estado</th>
+            <th>Modalidad</th>
+            <th>Costo</th>
+            <th>Fecha adquisición</th>
+            <th>Remisión</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="equipo : ${equipos}">
+            <td th:text="${equipo.id}"></td>
+            <td th:text="${equipo.serial}"></td>
+            <td th:text="${equipo.placa}"></td>
+            <td th:text="${equipo.tipo}"></td>
+            <td class="text-truncate" style="max-width: 300px;" th:text="${equipo.caracteristicas}"></td>
+            <td th:switch="${equipo.estado}">
+              <span class="badge bg-success status-badge" th:case="'1'">Activo</span>
+              <span class="badge bg-secondary status-badge" th:case="'0'">Inactivo</span>
+              <span class="badge bg-secondary status-badge" th:case="*">Inactivo</span>
+            </td>
+            <td th:text="${equipo.modalidadDeAdquisicion}"></td>
+            <td th:text="${equipo.costoDeAdquisicion}"></td>
+            <td th:text="${equipo.fechaDeAdquisicion}"></td>
+            <td th:text="${equipo.remisionDeProveedor}"></td>
+            <td class="text-nowrap">
+              <a th:href="@{/equipos/editar/{id}(id=${equipo.id})}" class="btn btn-warning btn-sm">
+                <i class="bi bi-pencil-square"></i>
+              </a>
+              <a th:href="@{/equipos/eliminar/{id}(id=${equipo.id})}" class="btn btn-danger btn-sm"
+                 onclick="return confirm('¿Estás seguro de eliminar este equipo?');">
+                <i class="bi bi-trash"></i>
+              </a>
+            </td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(equipos)}">
+            <td colspan="11" class="text-center text-muted py-4">
+              <i class="bi bi-inboxes me-1"></i>Sin resultados
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

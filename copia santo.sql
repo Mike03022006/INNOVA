@@ -13,7 +13,7 @@ CREATE TABLE usuarios (
     id INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(100) NOT NULL,
     correo VARCHAR(100) UNIQUE NOT NULL,
-    contraseña VARCHAR(100) NOT NULL, -- Aquí se recomienda usar hashes como bcrypt
+    password VARCHAR(100) NOT NULL, -- Aquí se recomienda usar hashes como bcrypt
     rol_id INT,
     activo BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (rol_id) REFERENCES roles(id) ON DELETE SET NULL

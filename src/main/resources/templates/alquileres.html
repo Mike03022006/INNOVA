@@ -1,142 +1,228 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Lista de Alquileres</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <meta charset="UTF-8">
+  <title>Lista de Alquileres</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --mint:#e9fff5;   /* muy claro */
+      --green:#66c49a;  /* medio */
+      --teal:#205f77;   /* teal */
+      --navy:#0c3863;   /* navy */
+      --ink:#0f2430;    /* texto oscuro */
+      --card:#ffffff;   /* fondos */
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      font-family:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      margin:0;
+      padding-top:72px; /* navbar fija */
+      background:
+        radial-gradient(1100px 700px at 0% -10%, rgba(102,196,154,.18), transparent 60%),
+        radial-gradient(900px 600px at 110% 0%, rgba(32,95,119,.18), transparent 60%),
+        linear-gradient(180deg, #f6fffb 0%, #f1fffb 100%);
+    }
+
+    /* NAVBAR */
+    .navbar-branding{
+      background: linear-gradient(90deg, var(--navy) 0%, var(--teal) 50%, var(--green) 100%);
+    }
+    .navbar .navbar-brand, .navbar .nav-link{ color:#e9fff5 !important; }
+    .navbar .navbar-brand:hover, .navbar .nav-link:hover{ color:#fff !important; }
+
+    /* TITULOS */
+    .page-title{
+      font-weight:800; letter-spacing:.2px; margin-bottom:.25rem;
+      background: linear-gradient(90deg, var(--teal), var(--navy));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+    }
+    .total-chip{
+      display:inline-block; padding:.25rem .6rem; border-radius:999px; font-weight:600;
+      background: rgba(102,196,154,.2); color: var(--teal); border:1px solid rgba(32,95,119,.15);
+    }
+
+    /* CARDS */
+    .card-ui{
+      background:var(--card); border:0; border-radius:16px;
+      box-shadow:0 6px 18px rgba(12,56,99,.08); overflow:hidden;
+    }
+    .accent-bar{ height:6px; background:linear-gradient(90deg, var(--green), var(--teal), var(--navy)); }
+    .card-ui .card-body{ padding:1rem; }
+
+    /* FORM */
+    label{ font-weight:600; }
+    .form-control, .form-select{
+      border-radius:10px; border:1px solid rgba(12,56,99,.18);
+    }
+    .form-control:focus, .form-select:focus{
+      border-color: var(--green);
+      box-shadow:0 0 0 .25rem rgba(102,196,154,.35);
+      outline:none;
+    }
+    .btn-brand{
+      background:var(--teal); color:#eafff8; border:none; border-radius:999px; font-weight:700;
+    }
+    .btn-brand:hover{ background:var(--navy); color:#fff; }
+    .btn-ghost{
+      background:transparent; color:var(--teal); border:2px solid var(--teal); border-radius:999px; font-weight:700;
+    }
+    .btn-ghost:hover{ background:var(--teal); color:#fff; }
+
+    /* TABLA */
+    .table-wrap{ max-height:65vh; overflow:auto; }
+    thead.sticky-top th{
+      background: var(--navy) !important; color:#fff !important;
+      position: sticky; top: 0; z-index: 2;
+    }
+    table tbody tr:hover{ background: rgba(233,255,245,.6); }
+    table td, table th{ vertical-align: middle; }
+    .actions .btn{ border-radius:10px; }
+  </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-    <div class="container-fluid">
-        <a class="navbar-brand" th:href="@{/}">Sistema de Alquileres</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link active" th:href="@{/alquileres}">Lista de Alquileres</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/equipos}">Equipos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/menu_empresas}">Empresas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/}">Menu principal</a>
-                </li>
-            </ul>
-        </div>
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark navbar-branding fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" th:href="@{/}">Sistema de Alquileres</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link active" th:href="@{/alquileres}">Lista de Alquileres</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/equipos}">Equipos</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/menu_empresas}">Empresas</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/}">Menú principal</a></li>
+      </ul>
     </div>
+  </div>
 </nav>
 
 <div class="container">
-    <h1 class="mb-4">Lista de Alquileres</h1>
-    <span class="text-muted" th:text="'Total: ' + ${#lists.size(alquileres)} + ' alquileres'">Total</span>
 
-    <!-- Formulario de búsqueda -->
-    <form method="get" th:action="@{/alquileres/buscar}" class="row g-2 mb-3">
-        <div class="col-auto">
-            <select name="campo" class="form-select" th:value="${campo}">
-                <option value="ordenDeCliente">Orden de Cliente</option>
-                <option value="referencia">Referencia</option>
-                <option value="localizacion">Localización</option>
-                <option value="fechaDeEntrega">Fecha de Entrega</option>
-                <option value="fechaDeDevolucion">Fecha de Devolución</option>
-                <option value="diasDeAlquiler">Días de Alquiler</option>
-                <option value="valor">Valor</option>
-                <option value="usuario">Usuario</option>
-                <option value="proyecto">Proyecto</option>
-                <option value="ordenDeOdoo">Orden de Odoo</option>
-                <option value="administrativo">Administrativo</option>
-                <option value="estado">Estado</option>
-                <option value="renovaciones">Renovaciones</option>
-                <option value="serial">Serial</option>
-                <option value="placa">Placa</option>
-                <option value="empresa">Empresa</option>
-            </select>
+  <div class="d-flex align-items-baseline justify-content-between flex-wrap gap-2 mb-2">
+    <h1 class="page-title mb-0">Lista de Alquileres</h1>
+    <span class="total-chip" th:text="'Total: ' + ${#lists.size(alquileres)} + ' alquileres'">Total</span>
+  </div>
+
+  <!-- Filtro / Búsqueda -->
+  <section class="card-ui mb-3">
+    <div class="accent-bar"></div>
+    <div class="card-body">
+      <form method="get" th:action="@{/alquileres/buscar}" class="row g-2 align-items-end">
+        <div class="col-12 col-md-auto">
+          <label class="form-label mb-1">Campo</label>
+          <select name="campo" class="form-select" th:value="${campo}">
+            <option value="ordenDeCliente">Orden de Cliente</option>
+            <option value="referencia">Referencia</option>
+            <option value="localizacion">Localización</option>
+            <option value="fechaDeEntrega">Fecha de Entrega</option>
+            <option value="fechaDeDevolucion">Fecha de Devolución</option>
+            <option value="diasDeAlquiler">Días de Alquiler</option>
+            <option value="valor">Valor</option>
+            <option value="usuario">Usuario</option>
+            <option value="proyecto">Proyecto</option>
+            <option value="ordenDeOdoo">Orden de Odoo</option>
+            <option value="administrativo">Administrativo</option>
+            <option value="estado">Estado</option>
+            <option value="renovaciones">Renovaciones</option>
+            <option value="serial">Serial</option>
+            <option value="placa">Placa</option>
+            <option value="empresa">Empresa</option>
+          </select>
         </div>
 
-        <div class="col-auto">
-            <select name="operador" class="form-select" th:value="${operador}">
-                <option value="=">Igual</option>
-                <option value="contiene">Contiene</option>
-            </select>
+        <div class="col-12 col-md-auto">
+          <label class="form-label mb-1">Operador</label>
+          <select name="operador" class="form-select" th:value="${operador}">
+            <option value="=">Igual</option>
+            <option value="contiene">Contiene</option>
+          </select>
         </div>
 
-        <div class="col-auto">
-            <input name="valor" class="form-control" placeholder="Valor a buscar" th:value="${valor}">
+        <div class="col-12 col-md-4">
+          <label class="form-label mb-1">Valor</label>
+          <input name="valor" class="form-control" placeholder="Valor a buscar" th:value="${valor}">
         </div>
 
-        <div class="col-auto">
-            <button class="btn btn-primary" type="submit">Buscar</button>
+        <div class="col-12 col-md-auto d-flex gap-2">
+          <button class="btn btn-brand" type="submit">Buscar</button>
+          <a class="btn btn-ghost"
+             th:href="@{/alquileres/reporte(campo=${campo}, operador=${operador}, valor=${valor})}">
+            Exportar PDF
+          </a>
         </div>
-                <div class="col-auto">
-            <a class="btn btn-outline-secondary"
-               th:href="@{/alquileres/reporte(campo=${campo}, operador=${operador}, valor=${valor})}">
-                Exportar PDF
-            </a>
+      </form>
+    </div>
+  </section>
 
-        </div>
-    </form>
-
-    <table class="table table-bordered table-hover table-striped">
-        <thead class="table-dark">
+  <!-- Tabla -->
+  <section class="card-ui">
+    <div class="accent-bar"></div>
+    <div class="card-body p-0">
+      <div class="table-wrap table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="sticky-top">
             <tr>
-                <th>ID</th>
-                <th>Serial</th>
-                <th>Placa</th>
-                <th>Empresa</th>
-                <th>Orden de Cliente</th>
-                <th>Referencia</th>
-                <th>Localizacion</th>
-                <th>Fecha Entrega</th>
-                <th>Fecha Devolución</th>
-                <th>Días</th>
-                <th>Valor</th>
-                <th>Proyecto</th>
-                <th>Usuario</th>
-                <th>Orden de Odoo</th>
-                <th>Estado</th>
-                <th>Acciones</th>
+              <th>ID</th>
+              <th>Serial</th>
+              <th>Placa</th>
+              <th>Empresa</th>
+              <th>Orden de Cliente</th>
+              <th>Referencia</th>
+              <th>Localización</th>
+              <th>Fecha Entrega</th>
+              <th>Fecha Devolución</th>
+              <th>Días</th>
+              <th>Valor</th>
+              <th>Proyecto</th>
+              <th>Usuario</th>
+              <th>Orden de Odoo</th>
+              <th>Estado</th>
+              <th>Acciones</th>
             </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
             <tr th:each="alquiler : ${alquileres}">
-                <td th:text="${alquiler.id}"></td>
-                <td th:text="${alquiler.equipo?.serial}"></td>
-                <td th:text="${alquiler.equipo?.placa}"></td>
-                <td th:text="${alquiler.empresa?.nombre}"></td>
-                <td th:text="${alquiler.ordenDeCliente}"></td>
-                <td th:text="${alquiler.referencia}"></td>
-                <td th:text="${alquiler.localizacion}"></td>
-                <td th:text="${alquiler.fechaDeEntrega != null ? #temporals.format(alquiler.fechaDeEntrega, 'dd/MM/yyyy') : ''}"></td>
-                <td th:text="${alquiler.fechaDeDevolucion != null ? #temporals.format(alquiler.fechaDeDevolucion, 'dd/MM/yyyy') : ''}"></td>
-                <td th:text="${alquiler.diasDeAlquiler}"></td>
-                <td th:text="${#numbers.formatDecimal(alquiler.valor, 0, 'POINT', 2, 'COMMA')}"></td>
-                <td th:text="${alquiler.proyecto}"></td>
-                <td th:text="${alquiler.usuario}"></td>
-                <td th:text="${alquiler.ordenDeOdoo}"></td>
-                <td>
-                    <span th:if="${alquiler.estado}" class="badge bg-success">Activo</span>
-                    <span th:unless="${alquiler.estado}" class="badge bg-secondary">Inactivo</span>
-                </td>
-                <td>
-                    <a th:href="@{/alquileres/eliminar/{id}(id=${alquiler.id})}" 
-                       class="btn btn-danger btn-sm"
-                       onclick="return confirm('¿Estás seguro de eliminar este alquiler?');">
-                        Eliminar
-                    </a>
-                     <a th:href="@{/alquileres/editar/{id}(id=${alquiler.id})}" class="btn btn-warning btn-sm">Editar</a>
-                </td>
+              <td th:text="${alquiler.id}"></td>
+              <td th:text="${alquiler.equipo?.serial}"></td>
+              <td th:text="${alquiler.equipo?.placa}"></td>
+              <td th:text="${alquiler.empresa?.nombre}"></td>
+              <td th:text="${alquiler.ordenDeCliente}"></td>
+              <td th:text="${alquiler.referencia}"></td>
+              <td th:text="${alquiler.localizacion}"></td>
+              <td th:text="${alquiler.fechaDeEntrega != null ? #temporals.format(alquiler.fechaDeEntrega, 'dd/MM/yyyy') : ''}"></td>
+              <td th:text="${alquiler.fechaDeDevolucion != null ? #temporals.format(alquiler.fechaDeDevolucion, 'dd/MM/yyyy') : ''}"></td>
+              <td th:text="${alquiler.diasDeAlquiler}"></td>
+              <td th:text="${#numbers.formatDecimal(alquiler.valor, 0, 'POINT', 2, 'COMMA')}"></td>
+              <td th:text="${alquiler.proyecto}"></td>
+              <td th:text="${alquiler.usuario}"></td>
+              <td th:text="${alquiler.ordenDeOdoo}"></td>
+              <td>
+                <span th:if="${alquiler.estado}" class="badge bg-success">Activo</span>
+                <span th:unless="${alquiler.estado}" class="badge bg-secondary">Inactivo</span>
+              </td>
+              <td class="actions">
+                <a th:href="@{/alquileres/eliminar/{id}(id=${alquiler.id})}"
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('¿Estás seguro de eliminar este alquiler?');">
+                  Eliminar
+                </a>
+                <a th:href="@{/alquileres/editar/{id}(id=${alquiler.id})}" class="btn btn-warning btn-sm">Editar</a>
+              </td>
             </tr>
-        </tbody>
-    </table>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
 
-    <a th:href="@{/}" class="btn btn-secondary mt-3">Volver al inicio</a>
+  <a th:href="@{/}" class="btn btn-ghost mt-3">Volver al inicio</a>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

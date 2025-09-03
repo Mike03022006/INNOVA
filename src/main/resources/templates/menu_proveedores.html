@@ -1,86 +1,139 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Proveedores</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            padding-top: 70px; /* espacio para navbar fija */
-        }
-        ul {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            list-style-type: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        li {
-            padding: 10px 0;
-            border-bottom: 1px solid #ddd;
-        }
-        li:last-child {
-            border-bottom: none;
-        }
-        a {
-            text-decoration: none;
-        }
-        .navbar-brand {
-            font-weight: bold;
-        }
-        .user-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .notification-badge {
-            position: absolute;
-            top: 8px;
-            right: 4px;
-            background: red;
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 5px;
-            border-radius: 50%;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Proveedores</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --mint:#e9fff5;   /* muy claro */
+      --green:#66c49a;  /* medio */
+      --teal:#205f77;   /* teal */
+      --navy:#0c3863;   /* navy */
+      --ink:#0f2430;    /* texto oscuro */
+      --card:#ffffff;   /* fondos */
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      font-family:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      padding-top:72px; /* navbar fija */
+      background:
+        radial-gradient(1100px 700px at 0% -10%, rgba(102,196,154,.18), transparent 60%),
+        radial-gradient(900px 600px at 110% 0%, rgba(32,95,119,.18), transparent 60%),
+        linear-gradient(180deg, #f6fffb 0%, #f1fffb 100%);
+    }
+
+    /* NAVBAR */
+    .navbar-branding{
+      background: linear-gradient(90deg, var(--navy) 0%, var(--teal) 50%, var(--green) 100%);
+    }
+    .navbar .navbar-brand, .navbar .nav-link{ color:#e9fff5 !important; }
+    .navbar .navbar-brand:hover, .navbar .nav-link:hover{ color:#fff !important; }
+
+    .user-avatar{ width:36px; height:36px; border-radius:50%; object-fit:cover; }
+    .icon-wrap{ position:relative; display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.12); color:#fff; }
+    .notification-badge{
+      position:absolute; top:-4px; right:-4px;
+      background:var(--green); color:#04311e; font-weight:700;
+      font-size:.7rem; padding:2px 6px; border-radius:999px; border:1px solid rgba(0,0,0,.1);
+    }
+
+    /* TÍTULO */
+    .page-title{
+      font-weight:800; letter-spacing:.2px; margin-bottom:1rem;
+      background: linear-gradient(90deg, var(--teal), var(--navy));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+    }
+
+    /* TARJETAS */
+    .providers-list{ padding-left:0; margin:0; list-style:none; }
+    .providers-list .col{ display:flex; }
+    .provider-card{
+      border:0; border-radius:16px; background:var(--card);
+      box-shadow:0 6px 18px rgba(12,56,99,.08);
+      transition:transform .2s ease, box-shadow .2s ease;
+      overflow:hidden; width:100%;
+    }
+    .provider-card:hover{
+      transform:translateY(-2px);
+      box-shadow:0 10px 24px rgba(12,56,99,.14);
+    }
+    .accent-bar{ height:6px; background:linear-gradient(90deg, var(--green), var(--teal), var(--navy)); }
+    .avatar{
+      width:48px; height:48px; border-radius:12px;
+      background:linear-gradient(135deg, var(--mint), rgba(102,196,154,.6));
+      display:inline-flex; align-items:center; justify-content:center;
+      color:var(--teal); font-weight:800;
+      border:1px solid rgba(12,56,99,.08);
+    }
+    .provider-link{
+      color:var(--teal); text-decoration:none; font-weight:700;
+    }
+    .provider-link:hover{ color:var(--navy); }
+    .btn-brand{
+      background:var(--teal); color:#eafff8; border:none; border-radius:999px;
+    }
+    .btn-brand:hover{ background:var(--navy); color:#fff; }
+
+    /* Accesibilidad */
+    .btn:focus, .provider-link:focus{
+      box-shadow:0 0 0 .25rem rgba(102,196,154,.35);
+      outline:none;
+    }
+  </style>
 </head>
 <body>
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" th:href="@{/}">← Menú Principal</a>
+<nav class="navbar navbar-expand-lg navbar-dark navbar-branding fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" th:href="@{/}">
+      <i class="bi bi-arrow-left-circle me-2"></i>Menú Principal
+    </a>
 
-        <div class="d-flex align-items-center ms-auto">
-            <!-- Notificaciones -->
-            <div class="position-relative me-3">
-                <i class="bi bi-bell fs-4"></i>
-                <span class="notification-badge">4</span>
-            </div>
-            <!-- Mensajes -->
-            <div class="position-relative me-3">
-                <i class="bi bi-chat fs-4"></i>
-                <span class="notification-badge">2</span>
-            </div>
-            <!-- Foto de usuario -->
-            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Usuario" class="user-avatar">
-        </div>
+    <div class="ms-auto d-flex align-items-center gap-3">
+      <div class="icon-wrap">
+        <i class="bi bi-bell fs-5"></i>
+        <span class="notification-badge">4</span>
+      </div>
+      <div class="icon-wrap">
+        <i class="bi bi-chat fs-5"></i>
+        <span class="notification-badge">2</span>
+      </div>
+      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Usuario" class="user-avatar">
     </div>
+  </div>
 </nav>
 
-<div class="container">
-    <h1 class="mb-4">Lista de Proveedores</h1>
-    <ul>
-        <li th:each="proveedor : ${proveedores}">
-            <a th:href="@{/proveedor/{id}/equipos(id=${proveedor.id})}" th:text="${proveedor.nombre}" class="text-primary">Nombre Proveedor</a>
-        </li>
-    </ul>
-</div>
+<main class="container">
+  <h1 class="page-title">Lista de Proveedores</h1>
 
+  <!-- Grid responsivo en <ul> para no tocar tu backend -->
+  <ul class="providers-list row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
+    <li class="col" th:each="proveedor : ${proveedores}">
+      <div class="provider-card card h-100">
+        <div class="accent-bar"></div>
+        <div class="card-body d-flex gap-3 align-items-start">
+          <div class="avatar"><i class="bi bi-buildings"></i></div>
+          <div class="flex-grow-1">
+            <h5 class="card-title mb-1">
+              <a class="provider-link stretched-link"
+                 th:href="@{/proveedor/{id}/equipos(id=${proveedor.id})}"
+                 th:text="${proveedor.nombre}">Nombre Proveedor</a>
+            </h5>
+            <p class="text-muted mb-0">Proveedor</p>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
